@@ -581,11 +581,11 @@ func (ic *indexClient) afterBulk() func(int64, []elastic.BulkableRequest, *elast
 			if backoff {
 				wait := ic.backoffDuration()
 				infoLog.Printf("Backing off for %.1f minutes after bulk indexing failures.", wait.Minutes())
-				// signal the event loop to pause pulling new events for a duration
-				ic.bulkBackoffC <- wait
-				// pause the bulk worker for a duration
-				ic.backoff(wait)
-				ic.bulkErrs.Add(1)
+				//// signal the event loop to pause pulling new events for a duration
+				//ic.bulkBackoffC <- wait
+				//// pause the bulk worker for a duration
+				//ic.backoff(wait)
+				//ic.bulkErrs.Add(1)
 			}
 		}
 	}
@@ -656,6 +656,7 @@ func (ic *indexClient) newBulkProcessor(client *elastic.Client) (bulk *elastic.B
 	bulkService.BulkSize(config.ElasticMaxBytes)
 	if config.ElasticRetry == false {
 		bulkService.Backoff(&elastic.StopBackoff{})
+
 	}
 	bulkService.After(ic.afterBulk())
 	bulkService.FlushInterval(time.Duration(config.ElasticMaxSeconds) * time.Second)
